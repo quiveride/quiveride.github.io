@@ -6,7 +6,7 @@
     <title>Quiver —— Claude Code &amp; Codex 的桌面会话管理器</title>
     <meta
       name="description"
-      content="Quiver 是 Claude Code 和 Codex 的桌面会话管理器（macOS GUI）。跨项目的所有终端 coding agent 会话一屏看完 —— 本地或远程 SSH —— 真实终端、真实 git diff、逐块暂存、真实 shell 全在同一个窗口里。"
+      content="Quiver 是 Claude Code 和 Codex 的桌面会话管理器（macOS GUI）。跨项目的所有终端 coding agent 会话一屏看完 —— 本地或远程 SSH —— 真实终端、真实 git diff、逐块暂存、真实 shell 全在同一个窗口里，还能用手机无缝接管任意会话。"
     />
     <link rel="canonical" href="https://quiveride.github.io/zh/" />
     <link rel="alternate" hreflang="en" href="https://quiveride.github.io/" />
@@ -17,7 +17,7 @@
     <meta property="og:title" content="Quiver —— Claude Code &amp; Codex 的桌面会话管理器" />
     <meta
       property="og:description"
-      content="不再到处翻 tmux 标签页。Quiver 给每个 Claude Code 和 Codex 会话一个固定的窗口。"
+      content="不再到处翻 tmux 标签页。Quiver 给每个 Claude Code 和 Codex 会话一个固定的窗口 —— 离开座位时，还能用手机接着接管。"
     />
     <meta property="og:image" content="../assets/screenshot-overview.png" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -65,12 +65,35 @@
           0 0 0 1px rgba(11, 13, 18, 0.05);
       }
       .badge-dot { display: inline-block; width: 6px; height: 6px; border-radius: 999px; background: #2563eb; margin-right: 8px; transform: translateY(-1px); }
+      /* Bulleted list item: a normal block whose marker is a positioned
+         ::before dot — no flexbox, so text and inline <code>/<em> flow
+         naturally and the dot can never be shrunk or split out. */
+      .bullet { position: relative; padding-left: 22px; }
+      .bullet::before {
+        content: ''; position: absolute; left: 3px; top: 0.6em;
+        width: 6px; height: 6px; border-radius: 999px; background: #2563eb;
+      }
       .hover-rise { transition: transform 200ms ease, box-shadow 200ms ease; }
       .hover-rise:hover { transform: translateY(-2px); }
       .kbd {
         font-family: 'JetBrains Mono', ui-monospace, monospace;
         font-size: 11px; padding: 2px 6px; border-radius: 4px;
         background: #f3f4f7; border: 1px solid #e5e8ee; color: #3b4250;
+      }
+      .phone-frame {
+        position: relative; width: 280px; margin: 0 auto; padding: 11px;
+        border-radius: 46px; background: #0b0d12;
+        box-shadow: 0 30px 70px -24px rgba(11, 13, 18, 0.4),
+          0 10px 28px -10px rgba(11, 13, 18, 0.22),
+          inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+      }
+      .phone-frame .screen {
+        position: relative; border-radius: 36px; overflow: hidden; background: #fff;
+        box-shadow: inset 0 0 0 1px rgba(11, 13, 18, 0.18);
+      }
+      .phone-frame .island {
+        position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+        width: 86px; height: 22px; border-radius: 999px; background: #0b0d12; z-index: 2;
       }
     </style>
   </head>
@@ -118,6 +141,10 @@
             不再翻 tmux 标签页、不再开八个 iTerm 窗口。
             Quiver 把每一个终端 coding agent 会话 —— Claude Code、Codex，以及更多即将支持的 ——
             都固定下来，本地或远程 SSH 主机都行：真实终端、真实 diff、逐块暂存、真实 shell，全在同一个画面里。
+          </p>
+          <p class="mt-4 text-lg text-ink-500 leading-relaxed max-w-2xl">
+            然后起身离开座位 —— 把任意会话一起带走。扫一下二维码，
+            手机就镜像出同一份侧栏，你可以接管一个正在跑的会话，窝在沙发上接着开。
           </p>
           <div class="mt-9 flex flex-wrap items-center gap-3">
             <a href="#download" class="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-ink-900 text-white text-sm font-medium hover:bg-ink-700">
@@ -250,6 +277,65 @@
       </div>
     </section>
 
+    <!-- FLAGSHIP: PHONE HANDOFF -->
+    <section
+      class="border-t border-ink-100 relative overflow-hidden"
+      style="background: linear-gradient(180deg, #f4f7ff 0%, #ffffff 78%);"
+    >
+      <div
+        class="absolute -top-24 right-[-10%] w-[520px] h-[520px] -z-0 opacity-60"
+        style="background: radial-gradient(50% 50% at 50% 50%, rgba(37,99,235,0.16), transparent);"
+        aria-hidden="true"
+      ></div>
+      <div class="max-w-container mx-auto px-6 py-20 md:py-28 relative">
+        <div class="grid md:grid-cols-12 gap-12 items-center">
+          <div class="md:col-span-6 order-2 md:order-1">
+            <p class="text-xs font-semibold tracking-wider uppercase text-accent mb-3">
+              <span class="badge-dot"></span>离开座位，活照样干
+            </p>
+            <h2 class="text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
+              用手机无缝接管<br />任意会话。
+            </h2>
+            <p class="mt-5 text-ink-700 text-[17px] leading-relaxed">
+              Quiver 在你的 Mac 上跑一个极小的中继。扫一次二维码，手机就镜像出
+              一模一样的侧栏 —— Opened、Pinned、每一个项目。点一个
+              <strong>LIVE</strong> 会话立刻就能开始驱动；点一个过去的会话，
+              Quiver 先在桌面上把它重新打开，再交到你手机上。同一个画面、
+              同一份滚动历史，agent 那侧不用装任何东西。
+            </p>
+            <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
+              <li class="bullet">
+                同一时刻只有一个驱动方。手机握着控制权时，桌面显示一个
+                &ldquo;使用中&rdquo;占位 + <em>收回控制</em> 按钮 ——
+                交接是显式的，绝不会被自动抢走。
+              </li>
+              <li class="bullet">
+                快捷键栏带 <code class="kbd">Esc</code>、方向键和一个插入换行的
+                <code class="kbd">⏎</code>；滑动翻看历史，点终端里的文件路径即可内联预览。
+              </li>
+              <li class="bullet">
+                默认关闭，由你设置的访问密码把守。手机登录一次拿到 30 天的
+                cookie —— 二维码、URL、日志里都不会出现任何密钥。
+              </li>
+            </ul>
+          </div>
+          <div class="md:col-span-6 order-1 md:order-2">
+            <div class="phone-frame hover-rise">
+              <span class="island" aria-hidden="true"></span>
+              <div class="screen">
+                <img
+                  src="../assets/screenshot-handoff.png"
+                  alt="Quiver 的远程页面在手机上：镜像桌面侧栏的 Opened、Pinned、所有项目分组，会话带 LIVE / RESUME 标签"
+                  class="block w-full"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- DEEP DIVE: SESSION -->
     <section id="workflow" class="border-t border-ink-100">
       <div class="max-w-container mx-auto px-6 py-20 md:py-28">
@@ -265,9 +351,9 @@
               直接点，从上次结束的地方继续。
             </p>
             <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
-              <li class="flex gap-3"><span class="badge-dot mt-2"></span>会话直接读每个 agent 自己的日志文件 —— 没有私有协议，也没有后台 daemon。</li>
-              <li class="flex gap-3"><span class="badge-dot mt-2"></span>标题自动从对话里提取；每行带一个 agent 小标记，一眼区分 Claude 和 Codex。</li>
-              <li class="flex gap-3"><span class="badge-dot mt-2"></span>状态点反映真实状态：运行中、等用户输入、等待权限确认、空闲、已完成。</li>
+              <li class="bullet">会话直接读每个 agent 自己的日志文件 —— 没有私有协议，也没有后台 daemon。</li>
+              <li class="bullet">标题自动从对话里提取；每行带一个 agent 小标记，一眼区分 Claude 和 Codex。</li>
+              <li class="bullet">状态点反映真实状态：运行中、等用户输入、等待权限确认、空闲、已完成。</li>
             </ul>
           </div>
           <div class="md:col-span-7 order-1 md:order-2">
@@ -320,13 +406,9 @@
               SSH 连接回传过来。
             </p>
             <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
-                远程项目在侧栏带一个 server 徽章，永远不会和本地项目搞混。
-              </li>
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
-                主机上有 <code class="kbd">tmux</code> 时，断线也不丢会话和正在跑的活，
+              <li class="bullet">远程项目在侧栏带一个 server 徽章，永远不会和本地项目搞混。</li>
+              <li class="bullet">
+                主机上有 <code class="kbd">tmux</code> 时，断线也不丢会话和正在跑的活,
                 重连直接回到同一个画面。
               </li>
             </ul>

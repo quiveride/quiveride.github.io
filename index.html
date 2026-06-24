@@ -6,7 +6,7 @@
     <title>Quiver — A session manager for Claude Code &amp; Codex</title>
     <meta
       name="description"
-      content="Quiver is a desktop session manager for Claude Code and Codex — a macOS GUI that puts every terminal coding-agent session across every project, local or over SSH, in one window with the real terminal, real git diff, staging, and a real shell."
+      content="Quiver is a desktop session manager for Claude Code and Codex — a macOS GUI that puts every terminal coding-agent session across every project, local or over SSH, in one window with the real terminal, real git diff, staging, and a real shell — then lets you take over any session from your phone."
     />
     <link rel="canonical" href="https://quiveride.github.io/" />
     <link rel="alternate" hreflang="en" href="https://quiveride.github.io/" />
@@ -17,7 +17,7 @@
     <meta property="og:title" content="Quiver — A session manager for Claude Code &amp; Codex" />
     <meta
       property="og:description"
-      content="Stop juggling tmux tabs. Quiver gives every Claude Code and Codex session a window of its own."
+      content="Stop juggling tmux tabs. Quiver gives every Claude Code and Codex session a window of its own — and follows you to your phone when you step away."
     />
     <meta property="og:image" content="./assets/screenshot-overview.png" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -83,6 +83,23 @@
         margin-right: 8px;
         transform: translateY(-1px);
       }
+      /* Bulleted list item: a normal block whose marker is a positioned
+         ::before dot. Avoids flexbox, so text and any inline <code>/<em>
+         flow naturally and the dot can never be shrunk or split out. */
+      .bullet {
+        position: relative;
+        padding-left: 22px;
+      }
+      .bullet::before {
+        content: '';
+        position: absolute;
+        left: 3px;
+        top: 0.6em;
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #2563eb;
+      }
       .hover-rise {
         transition: transform 200ms ease, box-shadow 200ms ease;
       }
@@ -97,6 +114,36 @@
         background: #f3f4f7;
         border: 1px solid #e5e8ee;
         color: #3b4250;
+      }
+      /* phone bezel that wraps the remote-handoff screenshot */
+      .phone-frame {
+        position: relative;
+        width: 280px;
+        margin: 0 auto;
+        padding: 11px;
+        border-radius: 46px;
+        background: #0b0d12;
+        box-shadow: 0 30px 70px -24px rgba(11, 13, 18, 0.4),
+          0 10px 28px -10px rgba(11, 13, 18, 0.22),
+          inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+      }
+      .phone-frame .screen {
+        position: relative;
+        border-radius: 36px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: inset 0 0 0 1px rgba(11, 13, 18, 0.18);
+      }
+      .phone-frame .island {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 86px;
+        height: 22px;
+        border-radius: 999px;
+        background: #0b0d12;
+        z-index: 2;
       }
     </style>
   </head>
@@ -153,6 +200,11 @@
             terminal coding agent &mdash; Claude Code, Codex, and more to come &mdash;
             a place, local or on a remote SSH host: pinned, searchable, with the
             real terminal, real diff, per-block staging, and a real shell in one frame.
+          </p>
+          <p class="mt-4 text-lg text-ink-500 leading-relaxed max-w-2xl">
+            Then step away from the desk &mdash; and take any session with you.
+            Scan a QR and your phone mirrors the same sidebar, so you can pick up
+            a live run and keep driving it from the couch.
           </p>
           <div class="mt-9 flex flex-wrap items-center gap-3">
             <a
@@ -325,6 +377,69 @@
       </div>
     </section>
 
+    <!-- ============ FLAGSHIP: PHONE HANDOFF ============ -->
+    <section
+      class="border-t border-ink-100 relative overflow-hidden"
+      style="background: linear-gradient(180deg, #f4f7ff 0%, #ffffff 78%);"
+    >
+      <div
+        class="absolute -top-24 right-[-10%] w-[520px] h-[520px] -z-0 opacity-60"
+        style="background: radial-gradient(50% 50% at 50% 50%, rgba(37,99,235,0.16), transparent);"
+        aria-hidden="true"
+      ></div>
+      <div class="max-w-container mx-auto px-6 py-20 md:py-28 relative">
+        <div class="grid md:grid-cols-12 gap-12 items-center">
+          <div class="md:col-span-6 order-2 md:order-1">
+            <p class="text-xs font-semibold tracking-wider uppercase text-accent mb-3">
+              <span class="badge-dot"></span>Step away, keep going
+            </p>
+            <h2 class="text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
+              Take over any session<br />from your phone.
+            </h2>
+            <p class="mt-5 text-ink-700 text-[17px] leading-relaxed">
+              Quiver runs a tiny relay on your Mac. Scan the QR once and your
+              phone mirrors the very same sidebar &mdash; Opened, Pinned, every
+              project. Tap a <strong>LIVE</strong> session and you&rsquo;re
+              driving it instantly; tap a past one and Quiver reopens it on the
+              desktop, then hands it to your phone. Same screen, same scrollback,
+              nothing to install on the agent&rsquo;s side.
+            </p>
+            <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
+              <li class="bullet">
+                One driver at a time. While your phone holds control the
+                desktop shows an &ldquo;in use&rdquo; placeholder with
+                <em>Take back control</em> &mdash; the handoff is deliberate,
+                never auto-grabbed.
+              </li>
+              <li class="bullet">
+                A quick-key bar for <code class="kbd">Esc</code>, arrows and a
+                <code class="kbd">⏎</code> that inserts a newline; swipe to
+                scroll back through history, tap a file path to preview it inline.
+              </li>
+              <li class="bullet">
+                Off by default, gated by a password you set. The phone signs in
+                once for a 30-day cookie &mdash; no secret ever rides in the QR,
+                the URL, or the logs.
+              </li>
+            </ul>
+          </div>
+          <div class="md:col-span-6 order-1 md:order-2">
+            <div class="phone-frame hover-rise">
+              <span class="island" aria-hidden="true"></span>
+              <div class="screen">
+                <img
+                  src="./assets/screenshot-handoff.png"
+                  alt="Quiver's remote page on a phone, mirroring the desktop sidebar with Opened, Pinned and All projects sections and LIVE / RESUME session tags"
+                  class="block w-full"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ DEEP DIVE: SESSION SHOT ============ -->
     <section id="workflow" class="border-t border-ink-100">
       <div class="max-w-container mx-auto px-6 py-20 md:py-28">
@@ -341,19 +456,16 @@
               you were in &mdash; or which agent you started in.
             </p>
             <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
+              <li class="bullet">
                 Sessions read straight from each agent&rsquo;s own log
                 files &mdash; no proprietary format, no daemon.
               </li>
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
+              <li class="bullet">
                 Title auto-derived from the conversation; rename inline if you
                 want. Each row carries a small agent chip so you can tell
                 Claude from Codex at a glance.
               </li>
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
+              <li class="bullet">
                 Status dot reflects the real state: running, awaiting input,
                 awaiting permission, idle, done.
               </li>
@@ -422,13 +534,11 @@
               multiplexed SSH connection.
             </p>
             <ul class="mt-6 space-y-3 text-ink-700 text-[15px]">
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
+              <li class="bullet">
                 Remote projects carry a server badge in the sidebar, so they
                 never get mistaken for local ones.
               </li>
-              <li class="flex gap-3">
-                <span class="badge-dot mt-2"></span>
+              <li class="bullet">
                 With <code class="kbd">tmux</code> on the host, a dropped link
                 leaves the session &mdash; and its in-flight work &mdash; alive;
                 reconnect lands on the exact same screen.
